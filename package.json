@@ -20,6 +20,7 @@
     "fs": "*",
     "hapi-auth-jwt2": "^10.2.0",
     "joi": "^17.4.0",
+    "lodash": "^4.17.21",
     "path": "^0.12.7"
   },
   "devDependencies": {

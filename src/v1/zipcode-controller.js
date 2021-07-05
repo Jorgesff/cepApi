@@ -7,10 +7,10 @@ const { zipcodeBusiness } = require("./zipcode-business");
 const controller = async (request, h) => {
     try {
         const business = await zipcodeBusiness(request)
-        return h.response(business).code(HttpStatus.OK);
+        return h.response(business.data).code(HttpStatus.OK);
 
     } catch (error) {
-       h.response(error).code(error.status_code)
+       return h.response({message: error.message}).code(error.statusCode)
     }
 }
 
