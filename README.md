@@ -18,6 +18,11 @@
 4. Execute o projeto  
 `npm start`
 
+5. Para ver a documentação completa da api pelo swagger basta acessar o seguinte endereço enquanto o serviço estiver ativo
+
+```
+    http://<host>:<port>/documentation
+```
 
 ## Testes
 

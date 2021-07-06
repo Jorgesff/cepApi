@@ -2,8 +2,10 @@
 
 const { getZipcode } = require("./service/viaCep");
 const _ = require('lodash');
+const util = require('util');
 const HttpStatus = require('http-status');
 const BusinessError = require("./zipcode-exception");
+const { logger } = require("../../config/log-manager");
 
 const zipcodeBusiness = async (options) => {
 
@@ -16,8 +18,10 @@ const zipcodeBusiness = async (options) => {
                 const subZipcode = zipcodeToBeTested.slice(0, x)
                 zipcodeToBeTested = _.padEnd(subZipcode, 8, '0');
             }
+            logger.info(util.format('Buscando cep: %s', zipcodeToBeTested))
             const response = await getZipcode(zipcodeToBeTested);
             if (!response.data.erro) {
+                logger.info('Zipcode não encontrado!')
                 zipcodeFounded = response;
                 index = zipcodeToBeTested.length;
             }

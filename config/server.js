@@ -72,7 +72,7 @@ const start = async () => {
     })
     server.auth.default('jwt')
     await server.start()
-    console.log("Server is running on port " + configuration.server.port)
+    logger.info("Server is running on port " + configuration.server.port)
   } catch (error) {
     logger.info({ err: error })
   }
