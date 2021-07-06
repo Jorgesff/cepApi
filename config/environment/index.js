@@ -20,8 +20,7 @@ initEnvVariables()
 const envs = {
     viacep: {
         viaCepUrl: process.env.VIACEP_URL,
-        viaCepTimeout: process.env.VIACEP_TIMEOUT,
-        viaCepRetries: process.env.VIACEP_RETRIES
+        viaCepTimeout: process.env.VIACEP_TIMEOUT
     },
     server: {
         routeTimout: process.env.ROUTE_TIMEOUT,
