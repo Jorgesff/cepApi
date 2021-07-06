@@ -8,7 +8,6 @@ const { logger } = require('./log-manager');
 const Routes = require('../src/v1/zipcode-routes');
 const Inert = require('@hapi/inert');
 const Vision = require('@hapi/vision');
-const { version } = require('joi');
 
 const server = Hapi.server({
   host: configuration.server.host,
@@ -49,12 +48,20 @@ const plugins = [
 ]
 
 const validate = async (decode, request, h) => {
+  if (process.env.NODE_ENV == 'test') {
+    return { isValid: true }
+  }
   if (decode) {
     return { isValid: true }
   }
 }
-
 const init = async () => {
+  await server.initialize()
+  return server;
+}
+
+
+const start = async () => {
   try {
     plugins.push(Routes)
     plugins.push(AuthJWT)
@@ -70,5 +77,5 @@ const init = async () => {
     logger.info({ err: error })
   }
 }
-init();
-module.exports = { server }
+start();
+module.exports = { server, init }

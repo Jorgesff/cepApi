@@ -8,6 +8,6 @@ const zipcodeSchema = {
             .string()
             .regex(new RegExp("^[0-9]{8}$"))
             .required()
-    })
+    }).allow('zipcode')
 }
 module.exports = { zipcodeSchema }

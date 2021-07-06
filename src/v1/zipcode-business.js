@@ -25,7 +25,8 @@ const zipcodeBusiness = async (options) => {
         if (!zipcodeFounded) {
             throw new BusinessError({
                 message: "Não foi encontrado nenhum cep igual ou similar, por favor tente outro!",
-                statusCode: HttpStatus.NOT_FOUND
+                statusCode: HttpStatus.NOT_FOUND,
+                error: 'Not Found'
             })
         }
         return zipcodeFounded;
@@ -33,7 +34,8 @@ const zipcodeBusiness = async (options) => {
         if (error.statusCode != HttpStatus.NOT_FOUND) {
             throw new BusinessError({
                 message: error.message,
-                statusCode: HttpStatus.INTERNAL_SERVER_ERROR
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                error: 'Internal Server Error'
             })
         }
         throw error

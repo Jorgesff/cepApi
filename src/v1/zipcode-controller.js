@@ -10,7 +10,7 @@ const controller = async (request, h) => {
         return h.response(business.data).code(HttpStatus.OK);
 
     } catch (error) {
-       return h.response({message: error.message}).code(error.statusCode)
+       return h.response(error).code(error.statusCode)
     }
 }
 
