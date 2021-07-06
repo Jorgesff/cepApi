@@ -16,5 +16,12 @@ const controller = async (request, h) => {
         return h.response(error).code(error.statusCode)
     }
 }
+const healthController = async (request, h) => {
+    try {
+        return h.response({ status: 'pong' }).code(HttpStatus.OK)
+    } catch (error) {
+        return h.response(error).code(error.statusCode)
+    }
+}
 
-module.exports = { controller }
+module.exports = { controller, healthController }

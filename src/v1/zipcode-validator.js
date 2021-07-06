@@ -1,6 +1,6 @@
 'use strict'
 
-const Joi = require("joi")
+const Joi = require("joi");
 
 const zipcodeSchema = {
     query: Joi.object({
@@ -10,4 +10,8 @@ const zipcodeSchema = {
             .required()
     }).allow('zipcode')
 }
-module.exports = { zipcodeSchema }
+
+const healthSchema = {
+    query: Joi.object({}).allow()
+}
+module.exports = { zipcodeSchema, healthSchema }

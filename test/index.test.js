@@ -29,6 +29,20 @@ afterAll((done) => {
 })
 axios.defaults.adapter = require('axios/lib/adapters/http')
 
+test('200 - should return successfull on health route', async () => {
+    const options = {
+        method: 'GET',
+        url: '/ping',
+        headers: {
+            'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
+        }
+    };
+    const data = await server.inject(options);
+    expect(data.statusCode).toBe(HttpStatus.OK);
+    expect(data.result).toHaveProperty('status', 'pong');
+    
+});
+
 test('200 - should return successfull', async () => {
     const options = {
         method: 'GET',

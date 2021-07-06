@@ -2,5 +2,5 @@ JWT_SECRET=<token secret - any>
 API_HOST=<application host>
 API_PORT=<application port - number>
 
-VIACEP_URL=http://viacep.com.br/ws
+VIACEP_URL=http://viacep.com.br
 VIACEP_TIMEOUT=<service request timeout - number>
