@@ -1,5 +1,19 @@
 # Api de consulta de CEP
 
+## Arquitetura
+  ### Linguagem
+  * Noje js
+  ### Framework
+  * hapi js
+  ### Documentation
+  * swagger
+  ### Test
+  * jest 
+  ### Http request lib
+  * axios
+  ### Utils
+  * lodash
+
 ## Setup
 
 1. Faça o download do repositorio.  
