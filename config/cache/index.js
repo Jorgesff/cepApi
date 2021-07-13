@@ -8,12 +8,24 @@ exports.start = () => {
     if (cache) {
         return
     }
-    cache = new NodeCache({ stdTTL: configuration.cache.ttl })
+    if (configuration.cache.enabled) {
+        cache = new NodeCache({ stdTTL: configuration.cache.ttl })
+    }
 }
 exports.get = (key) => {
-    return cache.get(key);
+    if (cache) {
+        return cache.get(key);
+    }
 }
 
 exports.set = (key, value) => {
-    return cache.set(key, value)
+    if (cache) {
+        return cache.set(key, value)
+    }
+}
+
+exports.flush = () => {
+    if (cache) {
+        cache.flushAll();
+    }
 }

@@ -7,6 +7,7 @@ const nock = require('nock');
 const util = require('util');
 const envs = require('../config/environment');
 const axios = require('axios');
+const cache = require('../config/cache')
 
 const { responseSuccessful, responseFailed, responseSuccessful_2 } = require('./testData/viaCepResponses');
 
@@ -19,6 +20,7 @@ beforeAll((done) => {
 beforeEach(() => {
     nock.disableNetConnect()
     nock.cleanAll()
+    
 })
 afterAll((done) => {
     server.events.on('stop', () => {
@@ -29,6 +31,7 @@ afterAll((done) => {
 axios.defaults.adapter = require('axios/lib/adapters/http')
 
 test('200 - should return successfull on health route', async () => {
+    envs.cache.enabled = false
     const options = {
         method: 'GET',
         url: '/ping',
@@ -43,9 +46,10 @@ test('200 - should return successfull on health route', async () => {
 });
 
 test('200 - should return successfull', async () => {
+    envs.cache.enabled = false
     const options = {
         method: 'GET',
-        url: '/zipcode?zipcode=14403131',
+        url: '/address?zipcode=14403131',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
         }
@@ -56,24 +60,26 @@ test('200 - should return successfull', async () => {
 
     const data = await server.inject(options);
     expect(data.statusCode).toBe(HttpStatus.OK);
-    expect(data.result).toHaveProperty('cep', '14403-131');
-    expect(data.result).toHaveProperty('logradouro', 'Rua João Trentino Ziller')
-    expect(data.result).toHaveProperty('complemento', '')
-    expect(data.result).toHaveProperty('bairro', 'Jardim Alvorada')
-    expect(data.result).toHaveProperty('localidade', 'Franca')
-    expect(data.result).toHaveProperty('uf', 'SP')
-    expect(data.result).toHaveProperty('ibge', '3516200')
-    expect(data.result).toHaveProperty('gia', '3104')
-    expect(data.result).toHaveProperty('ddd', '16')
-    expect(data.result).toHaveProperty('siafi', '6425')
+    expect(data.result.meta.origin).toHaveProperty('cache', false);
+    expect(data.result.data).toHaveProperty('cep', '14403-131');
+    expect(data.result.data).toHaveProperty('logradouro', 'Rua João Trentino Ziller')
+    expect(data.result.data).toHaveProperty('complemento', '')
+    expect(data.result.data).toHaveProperty('bairro', 'Jardim Alvorada')
+    expect(data.result.data).toHaveProperty('localidade', 'Franca')
+    expect(data.result.data).toHaveProperty('uf', 'SP')
+    expect(data.result.data).toHaveProperty('ibge', '3516200')
+    expect(data.result.data).toHaveProperty('gia', '3104')
+    expect(data.result.data).toHaveProperty('ddd', '16')
+    expect(data.result.data).toHaveProperty('siafi', '6425')
     
 });
 
 
 test('200 - should return successfull after trying one more time', async () => {
+    cache.flush();
     const options = {
         method: 'GET',
-        url: '/zipcode?zipcode=14403131',
+        url: '/address?zipcode=14403131',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
         }
@@ -89,23 +95,24 @@ test('200 - should return successfull after trying one more time', async () => {
 
     const data = await server.inject(options);
     expect(data.statusCode).toBe(HttpStatus.OK);
-    expect(data.result).toHaveProperty('cep', '14403-130');
-    expect(data.result).toHaveProperty('logradouro', 'Rua Caetano Lombardi')
-    expect(data.result).toHaveProperty('complemento', '')
-    expect(data.result).toHaveProperty('bairro', 'Jardim Alvorada')
-    expect(data.result).toHaveProperty('localidade', 'Franca')
-    expect(data.result).toHaveProperty('uf', 'SP')
-    expect(data.result).toHaveProperty('ibge', '3516200')
-    expect(data.result).toHaveProperty('gia', '3104')
-    expect(data.result).toHaveProperty('ddd', '16')
-    expect(data.result).toHaveProperty('siafi', '6425')
+    expect(data.result.data).toHaveProperty('cep', '14403-130');
+    expect(data.result.data).toHaveProperty('logradouro', 'Rua Caetano Lombardi')
+    expect(data.result.data).toHaveProperty('complemento', '')
+    expect(data.result.data).toHaveProperty('bairro', 'Jardim Alvorada')
+    expect(data.result.data).toHaveProperty('localidade', 'Franca')
+    expect(data.result.data).toHaveProperty('uf', 'SP')
+    expect(data.result.data).toHaveProperty('ibge', '3516200')
+    expect(data.result.data).toHaveProperty('gia', '3104')
+    expect(data.result.data).toHaveProperty('ddd', '16')
+    expect(data.result.data).toHaveProperty('siafi', '6425')
 });
 
 
 test('404 - should return not found after trying all the possibilities', async () => {
+    cache.flush();
     const options = {
         method: 'GET',
-        url: '/zipcode?zipcode=14403131',
+        url: '/address?zipcode=14403131',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
         }
@@ -146,9 +153,10 @@ test('404 - should return not found after trying all the possibilities', async (
 
 
 test('400 - should return bad request when pass incorrect zipcode - with letter', async () => {
+    envs.cache.enabled = false
     const options = {
         method: 'GET',
-        url: '/zipcode?zipcode=1440313a',
+        url: '/address?zipcode=1440313a',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
         }
@@ -160,9 +168,10 @@ test('400 - should return bad request when pass incorrect zipcode - with letter'
 });
 
 test('400 - should return bad request when pass incorrect zipcode - bigger than 8 digits', async () => {
+    envs.cache.enabled = false
     const options = {
         method: 'GET',
-        url: '/zipcode?zipcode=1440313145',
+        url: '/address?zipcode=1440313145',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
         }
@@ -175,9 +184,10 @@ test('400 - should return bad request when pass incorrect zipcode - bigger than 
 });
 
 test('400 - should return bad request when pass incorrect zipcode - smaller than 8 digits ', async () => {
+    envs.cache.enabled = false
     const options = {
         method: 'GET',
-        url: '/zipcode?zipcode=144031',
+        url: '/address?zipcode=144031',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
         }
@@ -189,9 +199,10 @@ test('400 - should return bad request when pass incorrect zipcode - smaller than
 });
 
 test('400 - should return bad request when pass incorrect zipcode - without de zipcode queryparam', async () => {
+    envs.cache.enabled = false
     const options = {
         method: 'GET',
-        url: '/zipcode',
+        url: '/address',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
         }
@@ -203,9 +214,10 @@ test('400 - should return bad request when pass incorrect zipcode - without de z
 });
 
 test('400 - should return bad request when pass diferents queryparams', async () => {
+    envs.cache.enabled = false
     const options = {
         method: 'GET',
-        url: '/zipcode?zipcode=14403131&limit=2',
+        url: '/address?zipcode=14403131&limit=2',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
         }
@@ -218,9 +230,10 @@ test('400 - should return bad request when pass diferents queryparams', async ()
 });
 
 test('401 - should return unalthorized when pass invalid token', async () => {
+    envs.cache.enabled = false
     const options = {
         method: 'GET',
-        url: '/zipcode?zipcode=14403131',
+        url: '/address?zipcode=14403131',
         headers: {
             'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.Fzyj62HwBhH2bNZkd9x1fd2s8TIuzUO8JmDMLAcPALY'
         }
@@ -230,7 +243,62 @@ test('401 - should return unalthorized when pass invalid token', async () => {
     expect(data.statusCode).toBe(HttpStatus.UNAUTHORIZED);
 });
 
+test('200 - should return successfull - with cache', async () => {
+    envs.cache.enabled = true
+    const options = {
+        method: 'GET',
+        url: '/address?zipcode=14403131',
+        headers: {
+            'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
+        }
+    };
+    nock(util.format('%s', envs.viacep.viaCepUrl))
+        .get(util.format('/ws/%s/json', '14403131'))
+        .reply(HttpStatus.OK, responseSuccessful)
 
+    const data = await server.inject(options);
+    expect(data.statusCode).toBe(HttpStatus.OK);
+    expect(data.result.data).toHaveProperty('cep', '14403-131');
+    expect(data.result.data).toHaveProperty('logradouro', 'Rua João Trentino Ziller')
+    expect(data.result.data).toHaveProperty('complemento', '')
+    expect(data.result.data).toHaveProperty('bairro', 'Jardim Alvorada')
+    expect(data.result.data).toHaveProperty('localidade', 'Franca')
+    expect(data.result.data).toHaveProperty('uf', 'SP')
+    expect(data.result.data).toHaveProperty('ibge', '3516200')
+    expect(data.result.data).toHaveProperty('gia', '3104')
+    expect(data.result.data).toHaveProperty('ddd', '16')
+    expect(data.result.data).toHaveProperty('siafi', '6425')
+    
+});
+
+test('200 - should return successfull - getting from cache', async () => {
+    envs.cache.enabled = true
+    const options = {
+        method: 'GET',
+        url: '/address?zipcode=14403131',
+        headers: {
+            'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.AfINaA0ECb8hF2tZSA_oiDZsUQc_10jf_hkv-l-5tEs'
+        }
+    };
+    nock(util.format('%s', envs.viacep.viaCepUrl))
+        .get(util.format('/ws/%s/json', '14403131'))
+        .reply(HttpStatus.OK, responseSuccessful)
+
+    const data = await server.inject(options);
+    expect(data.statusCode).toBe(HttpStatus.OK);
+    expect(data.result.meta.origin).toHaveProperty('cache', true);
+    expect(data.result.data).toHaveProperty('cep', '14403-131');
+    expect(data.result.data).toHaveProperty('logradouro', 'Rua João Trentino Ziller')
+    expect(data.result.data).toHaveProperty('complemento', '')
+    expect(data.result.data).toHaveProperty('bairro', 'Jardim Alvorada')
+    expect(data.result.data).toHaveProperty('localidade', 'Franca')
+    expect(data.result.data).toHaveProperty('uf', 'SP')
+    expect(data.result.data).toHaveProperty('ibge', '3516200')
+    expect(data.result.data).toHaveProperty('gia', '3104')
+    expect(data.result.data).toHaveProperty('ddd', '16')
+    expect(data.result.data).toHaveProperty('siafi', '6425')
+    
+});
 
 
 

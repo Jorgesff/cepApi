@@ -35,7 +35,7 @@ const zipcodeBusiness = async (options) => {
             return getZipcodeFromService(zipcodeToBeTested, latencyMarker, key);
         }
         
-        return buildResponse(zipcodeFounded, latencyMarker);
+        return buildResponse(zipcodeFounded, latencyMarker, true);
     } catch (error) {
         if (error.statusCode != HttpStatus.NOT_FOUND) {
             throw new BusinessError({

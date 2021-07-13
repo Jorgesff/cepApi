@@ -2,7 +2,14 @@
 
 const util = require('util');
 
-const buildResponse = (response, options) => {
+/**
+ * 
+ * @param {any} response 
+ * @param {any} options 
+ * @param {boolean} cached 
+ * @returns any
+ */
+const buildResponse = (response, options, cached = false) => {
     options.endPoint('api');
     return {
         meta: {
@@ -10,6 +17,9 @@ const buildResponse = (response, options) => {
                 api: util.format('%dms', options.getLatency('api')),
                 cache: util.format('%dms', options.getLatency('redis')),
                 service: util.format('%dms', options.getLatency('service'))
+            },
+            origin: {
+                cache: cached
             }
         },
         data: response

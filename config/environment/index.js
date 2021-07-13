@@ -30,6 +30,7 @@ const envs = {
         port: envUtil.getEnv('API_PORT', '3000')
     },
     cache: {
+        enabled: envUtil.getEnv('CACHE_ENABLED', true, true),
         ttl: envUtil.getEnv('CACHE_TTL', 30),
         key: envUtil.getEnv('CACHE_KEY', 'zipcode', true)
     },
