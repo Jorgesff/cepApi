@@ -37,7 +37,8 @@
 ```
     http://<host>:<port>/documentation
 ```
-
+6. para gerar um tokem basta entrar em https://jwt.io/ apagar o campo payload e colocar a secret que foi configurada na env `JWT_SECRET`
+  
 ## Testes
 
 ### Comando
