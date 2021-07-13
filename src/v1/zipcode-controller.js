@@ -5,22 +5,34 @@ const { logger } = require('../../config/log-manager');
 const { zipcodeBusiness } = require("./zipcode-business");
 
 
+/**
+ * 
+ * @param {*} request 
+ * @param {*} h 
+ * @returns any
+ */
 const controller = async (request, h) => {
     try {
-        const business = await zipcodeBusiness(request)
-        logger.info(business.data)
-        return h.response(business.data).code(HttpStatus.OK);
+        const business = await zipcodeBusiness(request);
+        return h.response(business).code(HttpStatus.OK);
 
     } catch (error) {
         logger.error(error);
-        return h.response(error).code(error.statusCode)
+        return h.response(error).code(error.statusCode);
     }
 }
+
+/**
+ * 
+ * @param {*} request 
+ * @param {*} h 
+ * @returns any
+ */
 const healthController = async (request, h) => {
     try {
-        return h.response({ status: 'pong' }).code(HttpStatus.OK)
+        return h.response({ status: 'pong' }).code(HttpStatus.OK);
     } catch (error) {
-        return h.response(error).code(error.statusCode)
+        return h.response(error).code(error.statusCode);
     }
 }
 

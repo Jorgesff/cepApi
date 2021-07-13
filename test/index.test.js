@@ -9,7 +9,6 @@ const envs = require('../config/environment');
 const axios = require('axios');
 
 const { responseSuccessful, responseFailed, responseSuccessful_2 } = require('./testData/viaCepResponses');
-const http = require('axios/lib/adapters/http');
 
 beforeAll((done) => {
     server.events.on('start', () => {

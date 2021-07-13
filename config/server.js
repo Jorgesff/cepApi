@@ -8,6 +8,7 @@ const { logger } = require('./log-manager');
 const Routes = require('../src/v1/zipcode-routes');
 const Inert = require('@hapi/inert');
 const Vision = require('@hapi/vision');
+const cache = require('./cache')
 
 const server = Hapi.server({
   host: configuration.server.host,
@@ -38,16 +39,30 @@ const plugins = [
   },
   {
     plugin: Hapiswagger,
+    swagger: '2.0',
     options: {
       info: {
         title: 'API Documentation',
-        version: '1.0.0'
+        version: '1.0.0',
+      },
+      schemes: ['http'],
+      security: [
+        {
+          token: []
+        }
+      ],
+      securityDefinitions: {
+        token: {
+          description: "",
+          type: "apiKey",
+          name: "Authorization",
+          in: "header"
+        }
       }
     }
   }
 ]
-
-const validate = async (decode, request, h) => {
+const validate = async (decode) => {
   if (process.env.NODE_ENV == 'test') {
     return { isValid: true }
   }
@@ -70,6 +85,7 @@ const start = async () => {
       key: configuration.auth.secret,
       validate
     })
+
     server.auth.default('jwt')
     await server.start()
     logger.info("Server is running on port " + configuration.server.port)
@@ -77,5 +93,7 @@ const start = async () => {
     logger.info({ err: error })
   }
 }
+
+cache.start()
 start();
-module.exports = { server, init }
+module.exports = { server, init, cache }

@@ -9,7 +9,7 @@ const plugin = {
         server.route([
             {
                 method: 'GET',
-                path: '/zipcode',
+                path: '/address',
                 options: {
                     handler: Controller.controller,
                     tags: ['api'],

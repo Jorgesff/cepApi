@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
+const envUtil = require('../../src/util/enviroment-util')
 
 const initEnvVariables = () => {
     // Set default node environment to development
@@ -18,17 +19,22 @@ const initEnvVariables = () => {
 initEnvVariables()
 
 const envs = {
+    env: envUtil.getEnv('NODE_ENV', 'development'),
     viacep: {
-        viaCepUrl: process.env.VIACEP_URL,
-        viaCepTimeout: process.env.VIACEP_TIMEOUT
+        viaCepUrl: envUtil.getEnv('VIACEP_URL', ''),
+        viaCepTimeout: envUtil.getEnv('VIACEP_TIMEOUT', '')
     },
     server: {
-        routeTimout: process.env.ROUTE_TIMEOUT,
-        host: process.env.API_HOST,
-        port: process.env.API_PORT
+        routeTimout: envUtil.getEnv('ROUTE_TIMEOUT',1000),
+        host: envUtil.getEnv('API_HOST', 'localhost'),
+        port: envUtil.getEnv('API_PORT', '3000')
+    },
+    cache: {
+        ttl: envUtil.getEnv('CACHE_TTL', 30),
+        key: envUtil.getEnv('CACHE_KEY', 'zipcode', true)
     },
     auth: {
-        secret: process.env.JWT_SECRET
+        secret: envUtil.getEnv('JWT_SECRET', '')
     }
 };
 
